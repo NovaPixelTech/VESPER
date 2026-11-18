@@ -62,20 +62,31 @@ selecting predefined options.
   The key is stored locally in your browser and only sent to the endpoint you
   configure.
 - The AI reacts in-world to questions and custom actions (you can examine
-  things, talk, experiment, etc.) and may nudge dread up or down, but it **does
-  not solve puzzles or grant story progress/items/clues/endings**. Use the
-  authored choices and quizzes to actually advance the plot.
+  things, talk, experiment, etc.), is grounded in the current scene and your
+  known facts, and may nudge dread up or down. It can also suggest follow-up
+  actions, but it **does not solve puzzles or grant story progress/items/clues/endings**.
+  Use the authored choices and quizzes to actually advance the plot.
 - Because this is a static site, direct browser calls may be blocked by CORS on
   some providers. If that happens, use a CORS-friendly OpenAI-compatible
   endpoint or proxy (for example OpenRouter or a local/proxy endpoint you
   control).
 
+### Other immersive features
+
+- **Ship Log & Undo:** actions, discoveries, and AI exchanges are recorded in the
+  log, and you can step back through recent choices to experiment.
+- **Reactive atmosphere:** dread influences visuals and tension; revisiting
+  locations and the meta-progression/ending tracker acknowledge that the loop
+  remembers.
+
 ### Top-bar controls
 
 | Button | Action |
 |--------|--------|
+| ✎ | Ship Log — a journal of arrivals, actions, discoveries, and AI exchanges |
 | ✧ | Codex — clues and patterns you have recognised |
 | ▣ | Inventory — items you are carrying |
+| ↶ | Undo — step back through recent actions/choices |
 | ♫ | Toggle sound on/off |
 | EN / ΕΛ | Switch language instantly |
 | ☰ | Settings |

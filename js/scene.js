@@ -35,6 +35,7 @@ window.VESPER_SCENE = (function () {
     var x = (e.clientX / window.innerWidth - .5) * 18;
     var y = (e.clientY / window.innerHeight - .5) * 12;
     var active = useA ? a : b;
+    if (!active) return;
     active.style.setProperty('--par-x', (-x).toFixed(1) + 'px');
     active.style.setProperty('--par-y', (-y).toFixed(1) + 'px');
   }
@@ -81,5 +82,9 @@ window.VESPER_SCENE = (function () {
     document.documentElement.setAttribute('data-motion', motion ? 'on' : 'off');
   }
 
-  return { init: init, set: set, glitch: glitch, setMotion: setMotion, urlFor: urlFor };
+  function setDread(level) {
+    document.body.setAttribute('data-dread', String(level || 0));
+  }
+
+  return { init: init, set: set, glitch: glitch, setMotion: setMotion, setDread: setDread, urlFor: urlFor };
 })();

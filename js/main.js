@@ -21,10 +21,11 @@
       onSpeed: function (name) { VESPER_ENGINE.setSpeed(name); },
       onChoice: function (choice) { VESPER_ENGINE.handleChoice(choice); },
       onAnswer: function (id, btn) { VESPER_ENGINE.handleAnswer(id, btn); },
-      onAIAction: function (text) { return VESPER_ENGINE.handleAIAction(text); }
+      onAIAction: function (text) { return VESPER_ENGINE.handleAIAction(text); },
+      onUndo: function () { VESPER_ENGINE.undo(); }
     });
 
-    VESPER_UI.showTitle(VESPER_ENGINE.hasSave());
+    VESPER_UI.showTitle(VESPER_ENGINE.hasSave(), VESPER_ENGINE.getEndingsFound ? VESPER_ENGINE.getEndingsFound() : []);
 
     function firstGesture() {
       VESPER_AUDIO.unlock();

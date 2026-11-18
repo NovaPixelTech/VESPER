@@ -38,7 +38,11 @@ window.I18N = (function () {
       aiNote: 'Bring your own OpenAI-compatible API key to ask questions and try custom actions. Your key stays in this browser. AI can react and answer in-world but will not solve puzzles or grant progress.',
       aiPlaceholder: 'Ask a question or try a custom action...', aiSend: 'SEND',
       aiThinking: 'The station listens...', aiYou: 'YOU', aiVesper: 'VESPER',
-      aiError: 'AI error', aiNotConfigured: 'Enable AI and add your API key in Settings to ask questions or try custom actions.'
+      aiError: 'AI error', aiNotConfigured: 'Enable AI and add your API key in Settings to ask questions or try custom actions.',
+      log: 'Log', logTitle: 'SHIP LOG', logEmpty: 'No entries yet.',
+      undo: 'Undo', undoNone: 'Nothing to undo.', revisit: 'You have stood here before.',
+      suggestLabel: 'SUGGESTIONS', endingsFound: 'Endings found', loopRemembers: 'The loop remembers.',
+      arrived: 'Arrived', chose: 'Action', asked: 'Asked', journalAI: 'Transmission'
     },
 
     el: {
@@ -76,7 +80,11 @@ window.I18N = (function () {
       aiNote: 'Χρησιμοποιήστε το δικό σας κλειδί API συμβατό με OpenAI για να κάνετε ερωτήσεις και να δοκιμάσετε δικές σας ενέργειες. Το κλειδί μένει σε αυτό το πρόγραμμα περιήγησης. Η AI μπορεί να αντιδρά και να απαντά, αλλά δεν θα λύσει γρίφους ούτε θα δώσει πρόοδο.',
       aiPlaceholder: 'Κάντε μια ερώτηση ή δοκιμάστε μια δική σας ενέργεια...', aiSend: 'ΑΠΟΣΤΟΛΗ',
       aiThinking: 'Ο σταθμός ακούει...', aiYou: 'ΕΣΕΙΣ', aiVesper: 'ΕΣΠΕΡΙΑ',
-      aiError: 'Σφάλμα AI', aiNotConfigured: 'Ενεργοποιήστε την AI και προσθέστε το κλειδί API στις Ρυθμίσεις για να κάνετε ερωτήσεις ή να δοκιμάσετε δικές σας ενέργειες.'
+      aiError: 'Σφάλμα AI', aiNotConfigured: 'Ενεργοποιήστε την AI και προσθέστε το κλειδί API στις Ρυθμίσεις για να κάνετε ερωτήσεις ή να δοκιμάσετε δικές σας ενέργειες.',
+      log: 'Ημερολόγιο', logTitle: 'ΗΜΕΡΟΛΟΓΙΟ ΣΚΑΦΟΥΣ', logEmpty: 'Δεν υπάρχουν καταχωρήσεις ακόμη.',
+      undo: 'Αναίρεση', undoNone: 'Τίποτα προς αναίρεση.', revisit: 'Έχετε σταθεί ξανά εδώ.',
+      suggestLabel: 'ΠΡΟΤΑΣΕΙΣ', endingsFound: 'Τέλη που βρέθηκαν', loopRemembers: 'Ο βρόχος θυμάται.',
+      arrived: 'Άφιξη', chose: 'Ενέργεια', asked: 'Ερώτηση', journalAI: 'Μετάδοση'
     }
   };
 

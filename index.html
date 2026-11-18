@@ -36,8 +36,10 @@
         <span class="dread-bar"><i id="dread-fill"></i></span>
         <span class="dread-num" id="dread-num">0</span>
       </div>
+      <button class="icon-btn" id="btn-log" data-i18n-title="log" aria-label="Log">✎</button>
       <button class="icon-btn" id="btn-codex" data-i18n-title="codex" aria-label="Codex">✧</button>
       <button class="icon-btn" id="btn-inventory" data-i18n-title="inventory" aria-label="Inventory">▣</button>
+      <button class="icon-btn" id="btn-undo" data-i18n-title="undo" aria-label="Undo">↶</button>
       <button class="icon-btn" id="btn-audio" data-i18n-title="sound" aria-label="Sound">♫</button>
       <button class="icon-btn lang-btn" id="btn-lang" aria-label="Language">EN</button>
       <button class="icon-btn" id="btn-menu" data-i18n-title="menu" aria-label="Menu">☰</button>
@@ -55,6 +57,7 @@
       <section class="choices" id="choices" aria-label="Available actions"></section>
       <section class="ai-panel hidden" id="ai-panel">
         <div class="ai-log" id="ai-log" aria-live="polite"></div>
+        <div class="ai-suggestions" id="ai-suggestions"></div>
         <form class="ai-form" id="ai-form">
           <input class="ai-input" id="ai-input" type="text" autocomplete="off" data-i18n-placeholder="aiPlaceholder" placeholder="Ask or try a custom action...">
           <button class="btn btn-primary ai-send" id="ai-send" type="submit" data-i18n="aiSend">SEND</button>
@@ -80,6 +83,7 @@
         <button class="btn" id="btn-continue" data-i18n="continue">CONTINUE</button>
         <button class="btn btn-quiet" id="btn-title-settings" data-i18n="settings">SETTINGS</button>
       </div>
+      <div class="title-meta" id="title-meta"></div>
       <div class="title-bottom">
         <button class="text-btn" id="btn-title-lang">EN / ΕΛ</button>
         <span class="dot">·</span>

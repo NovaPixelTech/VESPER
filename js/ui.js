@@ -27,8 +27,10 @@ window.VESPER_UI = (function () {
     $('btn-title-credits').addEventListener('click', function () { openPanel('credits'); });
     $('btn-title-lang').addEventListener('click', function () { H.onLangToggle && H.onLangToggle(); });
 
+    var btnLog = $('btn-log'); if (btnLog) btnLog.addEventListener('click', function () { openPanel('log'); });
     $('btn-codex').addEventListener('click', function () { openPanel('codex'); });
     $('btn-inventory').addEventListener('click', function () { openPanel('inventory'); });
+    var btnUndo = $('btn-undo'); if (btnUndo) btnUndo.addEventListener('click', function () { H.onUndo && H.onUndo(); });
     $('btn-audio').addEventListener('click', function () { H.onAudioToggle && H.onAudioToggle(); });
     $('btn-lang').addEventListener('click', function () { H.onLangToggle && H.onLangToggle(); });
     $('btn-menu').addEventListener('click', function () { openSettings(); });
@@ -93,6 +95,7 @@ window.VESPER_UI = (function () {
       }
       input.value = '';
       appendAILog('user', text);
+      renderAISuggestions([]);
       setAIStatus(I18N.t('aiThinking'));
       setAIEnabled(false);
       if (H.onAIAction) {
@@ -141,13 +144,19 @@ window.VESPER_UI = (function () {
     });
   }
 
-  function showTitle(hasSave) {
+  function showTitle(hasSave, endingsFound) {
     $('title-screen').classList.remove('hidden');
     $('game').classList.add('hidden');
     $('hud').classList.add('hidden');
     $('ending-screen').classList.add('hidden');
     $('btn-continue').disabled = !hasSave;
     $('btn-continue').style.opacity = hasSave ? 1 : .4;
+    var meta = $('title-meta');
+    if (meta) {
+      var found = endingsFound || [];
+      var total = (window.VESPER_CONTENT && VESPER_CONTENT.endings) ? Object.keys(VESPER_CONTENT.endings).length : 3;
+      meta.textContent = found.length ? (I18N.t('endingsFound') + ': ' + found.length + '/' + total + ' · ' + I18N.t('loopRemembers')) : '';
+    }
     applyStaticStrings();
   }
 
@@ -162,10 +171,19 @@ window.VESPER_UI = (function () {
     var keys = { 1: 'act1', 2: 'act2', 3: 'act3' };
     $('hud-act').textContent = I18N.t(keys[act] || '');
     $('btn-lang').textContent = I18N.lang === 'en' ? 'EN' : 'ΕΛ';
-    $('dread-num').textContent = state.dread;
-    $('dread-fill').style.width = (state.dread / 5 * 100) + '%';
-    $('btn-audio').classList.toggle('off', !state.audioOn);
-    document.body.classList.toggle('dread-high', state.dread >= 4);
+    if (state) {
+      $('dread-num').textContent = state.dread;
+      $('dread-fill').style.width = (state.dread / 5 * 100) + '%';
+      $('btn-audio').classList.toggle('off', !state.audioOn);
+      document.body.classList.toggle('dread-high', state.dread >= 4);
+      document.body.classList.toggle('dread-mid', state.dread >= 2 && state.dread < 4);
+      var undoBtn = $('btn-undo');
+      if (undoBtn) {
+        var canUndo = state.historyStack && state.historyStack.length > 0;
+        undoBtn.disabled = !canUndo;
+        undoBtn.style.opacity = canUndo ? 1 : 0.35;
+      }
+    }
   }
 
   function stopTyping() {
@@ -191,6 +209,11 @@ window.VESPER_UI = (function () {
 
     var paras = I18N.tx(scene.text);
     if (!Array.isArray(paras)) paras = [paras];
+    var visits = state && state.visitCounts ? (state.visitCounts[state.sceneId] || 0) : 0;
+    if (visits > 1) {
+      paras = paras.slice();
+      paras.push(I18N.t('revisit'));
+    }
     var el = $('scene-text');
     el.innerHTML = '';
     typeFull = paras;
@@ -203,6 +226,7 @@ window.VESPER_UI = (function () {
 
     renderChoices(scene, state, content);
     renderAILog(state || {});
+    renderAISuggestions(state && state.aiSuggestions ? state.aiSuggestions : []);
     syncAIVisibility();
     updateHud(state, scene.act);
   }
@@ -347,7 +371,28 @@ window.VESPER_UI = (function () {
     var kicker = $('panel-kicker'), title = $('panel-title'), body = $('panel-body');
     body.innerHTML = '';
 
-    if (type === 'inventory') {
+    if (type === 'log') {
+      kicker.textContent = I18N.t('log');
+      title.textContent = I18N.t('logTitle');
+      var logList = document.createElement('div');
+      logList.className = 'log-list';
+      var journal = state && state.journal ? state.journal.slice().reverse() : [];
+      if (!journal.length) logList.appendChild(emptyNote(I18N.t('logEmpty')));
+      journal.forEach(function (entry) {
+        var row = document.createElement('div');
+        row.className = 'log-entry log-' + (entry.kind || 'note');
+        var kind = document.createElement('div');
+        kind.className = 'log-kind';
+        kind.textContent = entry.kind || '';
+        var text = document.createElement('div');
+        text.className = 'log-text';
+        text.textContent = entry.text || '';
+        row.appendChild(kind);
+        row.appendChild(text);
+        logList.appendChild(row);
+      });
+      body.appendChild(logList);
+    } else if (type === 'inventory') {
       kicker.textContent = I18N.t('inventory');
       title.textContent = I18N.t('invTitle');
       var grid = document.createElement('div');
@@ -493,6 +538,38 @@ window.VESPER_UI = (function () {
     if (btn) btn.disabled = !on;
   }
 
+  function renderAISuggestions(list) {
+    var wrap = $('ai-suggestions');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    list = (list || []).filter(Boolean).slice(0, 3);
+    if (!list.length) { wrap.classList.add('empty'); return; }
+    wrap.classList.remove('empty');
+    var label = document.createElement('div');
+    label.className = 'ai-suggest-label';
+    label.textContent = I18N.t('suggestLabel');
+    wrap.appendChild(label);
+    var row = document.createElement('div');
+    row.className = 'ai-suggest-row';
+    list.forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'ai-suggest-chip';
+      b.textContent = s;
+      b.addEventListener('click', function () {
+        var input = $('ai-input');
+        if (input) { input.value = s; }
+        var form = $('ai-form');
+        if (form) {
+          if (form.requestSubmit) form.requestSubmit();
+          else form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+      });
+      row.appendChild(b);
+    });
+    wrap.appendChild(row);
+  }
+
   var currentSpeedName = 'normal';
   function setSeg(id, attr, value) {
     var wrap = $(id);
@@ -565,6 +642,6 @@ window.VESPER_UI = (function () {
     syncSettings: syncSettings, showEnding: showEnding, caption: caption, toast: toast,
     refreshLanguage: refreshLanguage, setSpeed: setSpeed, setCaptions: setCaptions,
     getCaptions: function () { return captionEnabled; }, getSpeed: function () { return currentSpeedName; },
-    appendAILog: appendAILog, setAIStatus: setAIStatus, setAIEnabled: setAIEnabled, renderAILog: renderAILog, syncAIVisibility: syncAIVisibility
+    appendAILog: appendAILog, setAIStatus: setAIStatus, setAIEnabled: setAIEnabled, renderAILog: renderAILog, syncAIVisibility: syncAIVisibility, renderAISuggestions: renderAISuggestions
   };
 })();

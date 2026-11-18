@@ -16,10 +16,49 @@ window.VESPER_ENGINE = (function () {
     return {
       sceneId: C.start,
       inventory: [], clues: [], flags: [], visited: [], used: [],
+      visitCounts: {}, journal: [], historyStack: [],
       dread: 0, choicesMade: 0,
-      aiHistory: [],
+      aiHistory: [], aiSuggestions: [],
       audioOn: true, volume: 0.7, captions: true, motion: true, speed: 'normal'
     };
+  }
+
+  function cloneState(s) {
+    return JSON.parse(JSON.stringify(s));
+  }
+  function ensureShape(s) {
+    if (!s) return s;
+    if (!s.visitCounts) s.visitCounts = {};
+    if (!s.journal) s.journal = [];
+    if (!s.historyStack) s.historyStack = [];
+    if (!s.aiHistory) s.aiHistory = [];
+    if (!s.aiSuggestions) s.aiSuggestions = [];
+    if (!s.used) s.used = [];
+    if (!s.flags) s.flags = [];
+    if (!s.visited) s.visited = [];
+    if (!s.inventory) s.inventory = [];
+    if (!s.clues) s.clues = [];
+    return s;
+  }
+  function pushHistory() {
+    var snap = cloneState(state);
+    snap.historyStack = []; // don't nest stacks
+    state.historyStack.push(snap);
+    if (state.historyStack.length > 20) state.historyStack.shift();
+  }
+  function addJournal(kind, text) {
+    if (!text) return;
+    state.journal.push({ kind: kind, text: text, sceneId: state.sceneId, t: Date.now() });
+    if (state.journal.length > 80) state.journal = state.journal.slice(-80);
+  }
+  function sceneName(id) {
+    var s = C.scenes[id];
+    return s ? (I18N.tx(s.title) || id) : id;
+  }
+  function updateDreadVisuals() {
+    document.body.classList.toggle('dread-high', state.dread >= 4);
+    document.body.classList.toggle('dread-mid', state.dread >= 2 && state.dread < 4);
+    document.body.setAttribute('data-dread', String(state.dread || 0));
   }
 
   function init() {
@@ -79,24 +118,28 @@ window.VESPER_ENGINE = (function () {
   /* ------------------------------------------------------------- effects */
   function addUnique(arr, id) { if (arr.indexOf(id) < 0) arr.push(id); }
 
-  function applyEffects(effects) {
+  function applyEffects(effects, silent) {
     if (!effects) return;
     effects.forEach(function (fx) {
       switch (fx.type) {
         case 'item':
           if (state.inventory.indexOf(fx.id) < 0) {
             state.inventory.push(fx.id);
-            VESPER_UI.toast('itemFound');
+            if (!silent) VESPER_UI.toast('itemFound');
+            var it = C.items[fx.id];
+            if (it) addJournal('item', I18N.t('itemFound') + ': ' + I18N.tx(it.name));
           }
           break;
         case 'removeItem':
           var i = state.inventory.indexOf(fx.id);
-          if (i >= 0) { state.inventory.splice(i, 1); VESPER_UI.toast('itemLost'); }
+          if (i >= 0) { state.inventory.splice(i, 1); if (!silent) VESPER_UI.toast('itemLost'); }
           break;
         case 'clue':
           if (state.clues.indexOf(fx.id) < 0) {
             state.clues.push(fx.id);
-            VESPER_UI.toast('clueFound');
+            if (!silent) VESPER_UI.toast('clueFound');
+            var cl = C.clues[fx.id];
+            if (cl) addJournal('clue', I18N.t('clueFound') + ': ' + I18N.tx(cl.name));
           }
           break;
         case 'flag': addUnique(state.flags, fx.id); break;
@@ -104,37 +147,49 @@ window.VESPER_ENGINE = (function () {
         case 'dread':
           var before = state.dread;
           state.dread = Math.max(0, Math.min(5, state.dread + fx.value));
-          if (state.dread !== before) VESPER_UI.toast(fx.value > 0 ? 'dreadUp' : 'dreadDown');
+          if (state.dread !== before) {
+            if (!silent) VESPER_UI.toast(fx.value > 0 ? 'dreadUp' : 'dreadDown');
+            updateDreadVisuals();
+          }
           break;
       }
     });
     VESPER_AUDIO.setDread(state.dread);
+    updateDreadVisuals();
   }
 
   /* ------------------------------------------------------------ movement */
-  function goto(id) {
+  function goto(id, opts) {
     var scene = C.scenes[id];
     if (!scene) return;
+    opts = opts || {};
     if (answerTimer) { clearTimeout(answerTimer); answerTimer = null; }
     state.sceneId = id;
     addUnique(state.visited, id);
+    if (!opts.restore) state.visitCounts[id] = (state.visitCounts[id] || 0) + 1;
+    if (!opts.silentLog) addJournal('arrive', I18N.t('arrived') + ': ' + I18N.tx(scene.title));
+    state.aiSuggestions = [];
     VESPER_SCENE.glitch();
     VESPER_SCENE.set(scene.image, false);
     VESPER_AUDIO.setBed(scene.bed);
     if (scene.cue) setTimeout(function () { VESPER_AUDIO.playCue(scene.cue); }, 420);
+    updateDreadVisuals();
     VESPER_UI.renderScene(scene, state, C);
     save();
   }
 
   function handleChoice(choice) {
     if (!choice) return;
+    pushHistory();
     state.choicesMade++;
     if (choice.once) addUnique(state.used, state.sceneId + ':' + choice.id);
+    addJournal('choice', I18N.t('chose') + ': ' + I18N.tx(choice.label));
     if (choice.effects) applyEffects(choice.effects);
 
     if (choice.quiz) {
       pending = choice;
       VESPER_UI.openQuiz(C.quizzes[choice.quiz], state);
+      save();
       return;
     }
     if (choice.ending) { endGame(choice.ending); return; }
@@ -168,6 +223,7 @@ window.VESPER_ENGINE = (function () {
       if (quiz.onWrong) applyEffects(quiz.onWrong);
       VESPER_UI.quizResult(false, quiz.wrong, quizAttempts[quizId]);
       VESPER_UI.updateHud(state, (C.scenes[state.sceneId] || {}).act);
+      save();
     }
   }
 
@@ -177,6 +233,7 @@ window.VESPER_ENGINE = (function () {
     if (found.indexOf(id) < 0) found.push(id);
     store(END_KEY, found);
   }
+  function getEndingsFound() { return load(END_KEY) || []; }
 
   function endGame(id) {
     var ending = C.endings[id];
@@ -186,6 +243,26 @@ window.VESPER_ENGINE = (function () {
     VESPER_AUDIO.playCue('ending');
     VESPER_UI.showEnding(ending, state, C);
     clearSave();
+  }
+
+  function undo() {
+    if (!state.historyStack || !state.historyStack.length) {
+      VESPER_UI.toast('undoNone');
+      return;
+    }
+    var snap = state.historyStack.pop();
+    var keep = {
+      audioOn: state.audioOn, volume: state.volume, captions: state.captions,
+      motion: state.motion, speed: state.speed
+    };
+    state = ensureShape(snap);
+    Object.keys(keep).forEach(function (k) { state[k] = keep[k]; });
+    pending = null;
+    quizAttempts = quizAttempts || {};
+    VESPER_AUDIO.setDread(state.dread);
+    updateDreadVisuals();
+    VESPER_UI.closeQuiz();
+    goto(state.sceneId, { silentLog: true, restore: true });
   }
 
   /* ---------------------------------------------------------- lifecycle */
@@ -216,8 +293,7 @@ window.VESPER_ENGINE = (function () {
       audioOn: state.audioOn, volume: state.volume, captions: state.captions,
       motion: state.motion, speed: state.speed
     };
-    state = saved;
-    if (!state.aiHistory) state.aiHistory = [];
+    state = ensureShape(saved);
     Object.keys(settings).forEach(function (k) { if (state[k] === undefined) state[k] = settings[k]; });
     pending = null;
     quizAttempts = {};
@@ -225,7 +301,8 @@ window.VESPER_ENGINE = (function () {
     VESPER_AUDIO.unlock();
     VESPER_AUDIO.startMusic();
     VESPER_AUDIO.setDread(state.dread);
-    goto(state.sceneId);
+    updateDreadVisuals();
+    goto(state.sceneId, { silentLog: true, restore: true });
   }
 
   function toTitle() {
@@ -235,7 +312,9 @@ window.VESPER_ENGINE = (function () {
     VESPER_SCENE.set('title', true);
     VESPER_AUDIO.setBed('ship');
     VESPER_AUDIO.setDread(0);
-    VESPER_UI.showTitle(hasSave());
+    document.body.classList.remove('dread-high', 'dread-mid');
+    document.body.setAttribute('data-dread', '0');
+    VESPER_UI.showTitle(hasSave(), getEndingsFound());
   }
 
   function setLanguage(lang) {
@@ -257,20 +336,27 @@ window.VESPER_ENGINE = (function () {
       VESPER_UI.setAIEnabled(true);
       return Promise.resolve();
     }
+    addJournal('ask', I18N.t('asked') + ': ' + text);
     return VESPER_AI.ask(text, state, scene, C).then(function (res) {
       if (!res) return;
       if (res.error) {
         VESPER_UI.appendAILog('ai', '[' + I18N.t('aiError') + '] ' + res.error);
       } else {
         VESPER_UI.appendAILog('ai', res.reply || '');
+        var short = (res.reply || '').replace(/\s+/g, ' ').trim();
+        if (short.length > 140) short = short.slice(0, 137) + '...';
+        addJournal('ai', I18N.t('journalAI') + ': ' + short);
         if (res.dread_delta) {
           var before = state.dread;
           state.dread = Math.max(0, Math.min(5, state.dread + res.dread_delta));
           if (state.dread !== before) {
             VESPER_AUDIO.setDread(state.dread);
             VESPER_UI.toast(res.dread_delta > 0 ? 'dreadUp' : 'dreadDown');
+            updateDreadVisuals();
           }
         }
+        state.aiSuggestions = Array.isArray(res.suggestions) ? res.suggestions.slice(0, 3) : [];
+        VESPER_UI.renderAISuggestions(state.aiSuggestions);
       }
       VESPER_UI.updateHud(state, scene.act);
       save();
@@ -319,6 +405,6 @@ window.VESPER_ENGINE = (function () {
     hasSave: hasSave, goto: goto, handleChoice: handleChoice, handleAnswer: handleAnswer,
     setLanguage: setLanguage, toggleLanguage: toggleLanguage, setAudio: setAudio, toggleAudio: toggleAudio,
     setVolume: setVolume, setCaptions: setCaptions, setMotion: setMotion, setSpeed: setSpeed,
-    applyEffects: applyEffects, handleAIAction: handleAIAction
+    applyEffects: applyEffects, handleAIAction: handleAIAction, undo: undo, getEndingsFound: getEndingsFound
   };
 })();

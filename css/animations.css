@@ -58,5 +58,15 @@
   50%      { box-shadow: 0 0 26px rgba(210,104,95,.22); }
 }
 
+@keyframes dreadShiver {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-0.5px); }
+  40% { transform: translateX(0.5px); }
+  60% { transform: translateX(-0.3px); }
+  80% { transform: translateX(0.3px); }
+}
+
 .glitching { animation: signalGlitch .5s var(--ease) both; }
+.dread-mid .narrative { box-shadow: 0 24px 70px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.03), 0 0 0 1px rgba(210,104,95,.08); }
 .dread-high .narrative { animation: dreadPulse 3.5s ease-in-out infinite; }
+.dread-high .scene-title { animation: dreadShiver 6s ease-in-out infinite; }
