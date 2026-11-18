@@ -1,0 +1,25 @@
+/* Generated scene image map — NASA public-domain imagery. */
+window.VESPER_IMAGES = {
+  "01_title": "01_title.jpg",
+  "02_waking": "02_waking.jpg",
+  "03_bridge": "03_bridge.jpg",
+  "04_medbay": "04_medbay.jpg",
+  "05_hydro": "05_hydro.jpg",
+  "06_signal": "06_signal.jpg",
+  "07_airlock": "07_airlock.jpg",
+  "08_departure": "08_departure.jpg",
+  "09_dock": "09_dock.jpg",
+  "10_threshold": "10_threshold.jpg",
+  "11_observation": "11_observation.jpg",
+  "12_archive": "12_archive.jpg",
+  "13_xenolab": "13_xenolab.jpg",
+  "14_garden": "14_garden.jpg",
+  "15_mirror": "15_mirror.jpg",
+  "16_descent": "16_descent.jpg",
+  "17_loop": "17_loop.jpg",
+  "18_echo": "18_echo.jpg",
+  "19_core_approach": "19_core_approach.jpg",
+  "20_core": "20_core.jpg",
+  "21_memory": "21_memory.jpg",
+  "title": "01_title.jpg"
+};

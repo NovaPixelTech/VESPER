@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050b12">
+<meta name="description" content="VESPER — a bilingual deep-space mystery text adventure with cinematic art and sampled sound.">
+<title>VESPER — The Last Transmission</title>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+<div id="app">
+
+  <div class="bg-stack" aria-hidden="true">
+    <div class="bg-image bg-a" id="bg-a"></div>
+    <div class="bg-image bg-b" id="bg-b"></div>
+    <div class="bg-grade"></div>
+    <div class="bg-vignette"></div>
+    <div class="bg-grain"></div>
+    <div class="bg-scan"></div>
+    <div class="stars" id="stars"></div>
+  </div>
+
+  <header id="hud" class="hud hidden">
+    <div class="hud-brand">
+      <span class="brand-glyph">◈</span>
+      <span class="brand-name" data-i18n="brand">VESPER</span>
+      <span class="brand-sub" data-i18n="brandSub">THE LAST TRANSMISSION</span>
+    </div>
+    <div class="hud-act" id="hud-act"></div>
+    <div class="hud-right">
+      <div class="dread" id="dread-widget" title="">
+        <span class="dread-label" data-i18n="dread">DREAD</span>
+        <span class="dread-bar"><i id="dread-fill"></i></span>
+        <span class="dread-num" id="dread-num">0</span>
+      </div>
+      <button class="icon-btn" id="btn-codex" data-i18n-title="codex" aria-label="Codex">✧</button>
+      <button class="icon-btn" id="btn-inventory" data-i18n-title="inventory" aria-label="Inventory">▣</button>
+      <button class="icon-btn" id="btn-audio" data-i18n-title="sound" aria-label="Sound">♫</button>
+      <button class="icon-btn lang-btn" id="btn-lang" aria-label="Language">EN</button>
+      <button class="icon-btn" id="btn-menu" data-i18n-title="menu" aria-label="Menu">☰</button>
+    </div>
+  </header>
+
+  <main id="game" class="game hidden">
+    <section class="narrative" id="narrative">
+      <div class="scene-kicker" id="scene-kicker"></div>
+      <h1 class="scene-title" id="scene-title"></h1>
+      <div class="scene-text" id="scene-text" aria-live="polite"></div>
+      <div class="scene-foot" id="scene-foot"></div>
+    </section>
+    <section class="choices" id="choices" aria-label="Available actions"></section>
+  </main>
+
+  <div class="caption" id="caption" aria-live="polite"></div>
+  <div class="cue-flash" id="cue-flash" aria-hidden="true"></div>
+
+  <!-- TITLE -->
+  <div class="overlay" id="title-screen">
+    <div class="title-wrap">
+      <div class="eyebrow" data-i18n="titleEyebrow">A SIGNAL FROM THE EDGE OF EVERYTHING</div>
+      <h1 class="game-title">VESPER</h1>
+      <div class="game-subtitle" data-i18n="titleSubtitle">THE LAST TRANSMISSION</div>
+      <div class="title-rule"><span></span><i>◈</i><span></span></div>
+      <p class="title-blurb" data-i18n="titleBlurb"></p>
+      <div class="title-actions">
+        <button class="btn btn-primary" id="btn-new" data-i18n="newGame">NEW TRANSMISSION</button>
+        <button class="btn" id="btn-continue" data-i18n="continue">CONTINUE</button>
+        <button class="btn btn-quiet" id="btn-title-settings" data-i18n="settings">SETTINGS</button>
+      </div>
+      <div class="title-bottom">
+        <button class="text-btn" id="btn-title-lang">EN / ΕΛ</button>
+        <span class="dot">·</span>
+        <span data-i18n="titleHint">HEADPHONES RECOMMENDED</span>
+        <span class="dot">·</span>
+        <button class="text-btn" id="btn-title-credits" data-i18n="credits">CREDITS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="overlay hidden" id="quiz-modal">
+    <div class="modal quiz-modal">
+      <div class="modal-corner tl"></div><div class="modal-corner br"></div>
+      <div class="modal-kicker" data-i18n="quizKicker">DEDUCTION REQUIRED</div>
+      <h2 class="modal-title" id="quiz-title"></h2>
+      <div class="quiz-context" id="quiz-context"></div>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+      <div class="modal-foot">
+        <button class="btn btn-quiet" id="btn-quiz-close" data-i18n="stepBack">STEP BACK</button>
+        <span class="quiz-attempts" id="quiz-attempts"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTORY / CODEX / CREDITS -->
+  <div class="overlay hidden" id="panel-modal">
+    <div class="modal panel-modal">
+      <div class="modal-corner tl"></div><div class="modal-corner br"></div>
+      <div class="modal-kicker" id="panel-kicker"></div>
+      <h2 class="modal-title" id="panel-title"></h2>
+      <div class="panel-body" id="panel-body"></div>
+      <div class="modal-foot">
+        <button class="btn btn-quiet" id="btn-panel-close" data-i18n="close">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="overlay hidden" id="settings-modal">
+    <div class="modal settings-modal">
+      <div class="modal-corner tl"></div><div class="modal-corner br"></div>
+      <div class="modal-kicker" data-i18n="settings">SETTINGS</div>
+      <h2 class="modal-title" data-i18n="settingsTitle">SHIP SYSTEMS</h2>
+      <div class="settings-body">
+        <label class="setting-row">
+          <span data-i18n="language">LANGUAGE / ΓΛΩΣΣΑ</span>
+          <span class="seg" id="seg-lang">
+            <button class="seg-btn active" data-lang="en">ENGLISH</button>
+            <button class="seg-btn" data-lang="el">ΕΛΛΗΝΙΚΑ</button>
+          </span>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="sound">SOUND</span>
+          <span class="seg" id="seg-audio">
+            <button class="seg-btn active" data-audio="on" data-i18n="on">ON</button>
+            <button class="seg-btn" data-audio="off" data-i18n="off">OFF</button>
+          </span>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="volume">VOLUME</span>
+          <input type="range" id="volume" min="0" max="100" value="70" aria-label="Volume">
+        </label>
+        <label class="setting-row">
+          <span data-i18n="captions">SOUND CAPTIONS</span>
+          <span class="seg" id="seg-captions">
+            <button class="seg-btn active" data-caps="on" data-i18n="on">ON</button>
+            <button class="seg-btn" data-caps="off" data-i18n="off">OFF</button>
+          </span>
+        </label>
+        <label class="setting-row">
+          <span data-i18n="motion">MOTION</span>
+          <span class="seg" id="seg-motion">
+            <button class="seg-btn active" data-motion="on" data-i18n="on">ON</button>
+            <button class="seg-btn" data-motion="off" data-i18n="off">OFF</button>
+          </span>
+        </label>
+        <div class="setting-row setting-stack">
+          <span data-i18n="typeSpeed">TEXT SPEED</span>
+          <span class="seg" id="seg-speed">
+            <button class="seg-btn" data-speed="slow" data-i18n="slow">SLOW</button>
+            <button class="seg-btn active" data-speed="normal" data-i18n="normal">NORMAL</button>
+            <button class="seg-btn" data-speed="fast" data-i18n="fast">FAST</button>
+          </span>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-quiet" id="btn-settings-close" data-i18n="close">CLOSE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENDING -->
+  <div class="overlay hidden" id="ending-screen">
+    <div class="ending-wrap">
+      <div class="ending-kicker" id="ending-kicker"></div>
+      <h1 class="ending-title" id="ending-title"></h1>
+      <div class="ending-rule"><span></span><i>◈</i><span></span></div>
+      <div class="ending-text" id="ending-text"></div>
+      <div class="ending-stats" id="ending-stats"></div>
+      <div class="ending-actions">
+        <button class="btn btn-primary" id="btn-play-again" data-i18n="playAgain">NEW TRANSMISSION</button>
+        <button class="btn btn-quiet" id="btn-ending-title" data-i18n="titleBtn">TITLE</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" aria-live="polite"></div>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/images.js"></script>
+<script src="js/audio_files.js"></script>
+<script src="js/content.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

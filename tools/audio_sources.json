@@ -1,0 +1,152 @@
+[
+  {
+    "key": "station",
+    "file": "station.ogg",
+    "description": "Howling wind / station exterior",
+    "freesound_id": "558840",
+    "page": "https://freesound.org/s/558840/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/558/558840_2247456-lq.ogg",
+    "bytes": 1287956
+  },
+  {
+    "key": "garden",
+    "file": "garden.ogg",
+    "description": "Bubbling water / organic ambience",
+    "freesound_id": "393819",
+    "page": "https://freesound.org/s/393819/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/393/393819_2247456-lq.ogg",
+    "bytes": 1949145
+  },
+  {
+    "key": "core",
+    "file": "core.ogg",
+    "description": "Deep rumble / core resonance",
+    "freesound_id": "473725",
+    "page": "https://freesound.org/s/473725/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/473/473725_304651-lq.ogg",
+    "bytes": 211805
+  },
+  {
+    "key": "tension",
+    "file": "tension.ogg",
+    "description": "Ominous sustained drone",
+    "freesound_id": "779184",
+    "page": "https://freesound.org/s/779184/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/779/779184_11318300-lq.ogg",
+    "bytes": 1854087
+  },
+  {
+    "key": "music",
+    "file": "music.ogg",
+    "description": "Atmospheric piano bed",
+    "freesound_id": "51245",
+    "page": "https://freesound.org/s/51245/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/51/51245_179538-lq.ogg",
+    "bytes": 21628
+  },
+  {
+    "key": "creak",
+    "file": "creak.ogg",
+    "description": "Metal creaking",
+    "freesound_id": "858945",
+    "page": "https://freesound.org/s/858945/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/858/858945_18860808-lq.ogg",
+    "bytes": 150680
+  },
+  {
+    "key": "whisper",
+    "file": "whisper.ogg",
+    "description": "Wordless whisper",
+    "freesound_id": "371224",
+    "page": "https://freesound.org/s/371224/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/371/371224_6196386-lq.ogg",
+    "bytes": 161549
+  },
+  {
+    "key": "glass_chime",
+    "file": "glass_chime.ogg",
+    "description": "Brittle bell / chime",
+    "freesound_id": "879783",
+    "page": "https://freesound.org/s/879783/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/879/879783_19512113-lq.ogg",
+    "bytes": 11729
+  },
+  {
+    "key": "door",
+    "file": "door.ogg",
+    "description": "Heavy metal door",
+    "freesound_id": "453966",
+    "page": "https://freesound.org/s/453966/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/453/453966_612689-lq.ogg",
+    "bytes": 86152
+  },
+  {
+    "key": "heartbeat",
+    "file": "heartbeat.ogg",
+    "description": "Slow heartbeat pulse",
+    "freesound_id": "877805",
+    "page": "https://freesound.org/s/877805/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/877/877805_19511840-lq.ogg",
+    "bytes": 8172
+  },
+  {
+    "key": "pulse",
+    "file": "pulse.ogg",
+    "description": "Signal static / pulse",
+    "freesound_id": "752465",
+    "page": "https://freesound.org/s/752465/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/752/752465_2093688-lq.ogg",
+    "bytes": 87433
+  },
+  {
+    "key": "glyph",
+    "file": "glyph.ogg",
+    "description": "Mechanical click / glyph unlock",
+    "freesound_id": "856165",
+    "page": "https://freesound.org/s/856165/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/856/856165_18901108-lq.ogg",
+    "bytes": 53877
+  },
+  {
+    "key": "ui",
+    "file": "ui.ogg",
+    "description": "Soft UI click",
+    "freesound_id": "716245",
+    "page": "https://freesound.org/s/716245/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/716/716245_13200806-lq.ogg",
+    "bytes": 82242
+  },
+  {
+    "key": "ending",
+    "file": "ending.ogg",
+    "description": "Deep gong / ending stinger",
+    "freesound_id": "415200",
+    "page": "https://freesound.org/s/415200/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/415/415200_7919598-lq.ogg",
+    "bytes": 26687
+  },
+  {
+    "key": "ship",
+    "file": "ship.ogg",
+    "description": "Ship engine hum ambience",
+    "freesound_id": "324665",
+    "page": "https://freesound.org/s/324665/",
+    "license": "Creative Commons 0 (CC0)",
+    "preview_url": "https://cdn.freesound.org/previews/324/324665_5583936-lq.ogg",
+    "bytes": 48035
+  }
+]

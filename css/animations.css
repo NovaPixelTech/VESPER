@@ -1,0 +1,62 @@
+/* ============================================================
+   VESPER — motion
+   ============================================================ */
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(18px) scale(.985); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(22px); filter: blur(5px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes choiceIn {
+  from { opacity: 0; transform: translateX(22px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes grainShift {
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(-3%, 2%); }
+  66%  { transform: translate(2%, -3%); }
+  100% { transform: translate(-2%, -1%); }
+}
+
+@keyframes twinkle {
+  from { opacity: .16; transform: scale(.7); }
+  to   { opacity: .95; transform: scale(1.25); }
+}
+
+@keyframes caretBlink {
+  0%, 49%  { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+@keyframes cueFlash {
+  0%   { opacity: 0; }
+  18%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes signalGlitch {
+  0%   { opacity: 1; transform: none; filter: none; }
+  8%   { opacity: .55; transform: translateX(-6px) skewX(-1.5deg); filter: hue-rotate(35deg) contrast(1.7); }
+  15%  { opacity: .9;  transform: translateX(5px); filter: hue-rotate(-25deg); }
+  23%  { opacity: .35; transform: translateX(-2px); filter: brightness(1.6); }
+  32%  { opacity: 1; transform: none; filter: none; }
+}
+
+@keyframes dreadPulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(210,104,95,0); }
+  50%      { box-shadow: 0 0 26px rgba(210,104,95,.22); }
+}
+
+.glitching { animation: signalGlitch .5s var(--ease) both; }
+.dread-high .narrative { animation: dreadPulse 3.5s ease-in-out infinite; }
