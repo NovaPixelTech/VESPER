@@ -32,7 +32,13 @@ window.I18N = (function () {
       saved: 'PROGRESS STORED', audioOn: 'SOUND ON', audioOff: 'SOUND OFF',
       skipHint: 'CLICK TO REVEAL INSTANTLY', endAct: 'TRANSMISSION INTERRUPTED',
       statsClues: 'CLUES', statsDread: 'DREAD', statsEnding: 'OUTCOME',
-      endingFound: 'ENDING DISCOVERED', restartHint: 'The loop remembers. Try again.'
+      endingFound: 'ENDING DISCOVERED', restartHint: 'The loop remembers. Try again.',
+      aiSettings: 'AI STORYTELLER (OPTIONAL)', aiEnable: 'ENABLE AI',
+      aiBaseUrl: 'API BASE URL', aiModel: 'MODEL', aiKey: 'API KEY (STORED LOCALLY)',
+      aiNote: 'Bring your own OpenAI-compatible API key to ask questions and try custom actions. Your key stays in this browser. AI can react and answer in-world but will not solve puzzles or grant progress.',
+      aiPlaceholder: 'Ask a question or try a custom action...', aiSend: 'SEND',
+      aiThinking: 'The station listens...', aiYou: 'YOU', aiVesper: 'VESPER',
+      aiError: 'AI error', aiNotConfigured: 'Enable AI and add your API key in Settings to ask questions or try custom actions.'
     },
 
     el: {
@@ -64,7 +70,13 @@ window.I18N = (function () {
       saved: 'Η ΠΡΟΟΔΟΣ ΑΠΟΘΗΚΕΥΤΗΚΕ', audioOn: 'ΗΧΟΣ ΕΝΕΡΓΟΣ', audioOff: 'ΗΧΟΣ ΑΝΕΝΕΡΓΟΣ',
       skipHint: 'ΚΑΝΤΕ ΚΛΙΚ ΓΙΑ ΑΜΕΣΗ ΑΠΟΚΑΛΥΨΗ', endAct: 'Η ΜΕΤΑΔΟΣΗ ΔΙΕΚΟΠΗ',
       statsClues: 'ΣΤΟΙΧΕΙΑ', statsDread: 'ΔΕΟΣ', statsEnding: 'ΕΚΒΑΣΗ',
-      endingFound: 'ΑΝΑΚΑΛΥΦΘΗΚΕ ΤΕΛΟΣ', restartHint: 'Ο βρόχος θυμάται. Δοκιμάστε ξανά.'
+      endingFound: 'ΑΝΑΚΑΛΥΦΘΗΚΕ ΤΕΛΟΣ', restartHint: 'Ο βρόχος θυμάται. Δοκιμάστε ξανά.',
+      aiSettings: 'ΑΦΗΓΗΤΗΣ AI (ΠΡΟΑΙΡΕΤΙΚΟ)', aiEnable: 'ΕΝΕΡΓΟΠΟΙΗΣΗ AI',
+      aiBaseUrl: 'URL ΒΑΣΗΣ API', aiModel: 'ΜΟΝΤΕΛΟ', aiKey: 'ΚΛΕΙΔΙ API (ΑΠΟΘΗΚΕΥΕΤΑΙ ΤΟΠΙΚΑ)',
+      aiNote: 'Χρησιμοποιήστε το δικό σας κλειδί API συμβατό με OpenAI για να κάνετε ερωτήσεις και να δοκιμάσετε δικές σας ενέργειες. Το κλειδί μένει σε αυτό το πρόγραμμα περιήγησης. Η AI μπορεί να αντιδρά και να απαντά, αλλά δεν θα λύσει γρίφους ούτε θα δώσει πρόοδο.',
+      aiPlaceholder: 'Κάντε μια ερώτηση ή δοκιμάστε μια δική σας ενέργεια...', aiSend: 'ΑΠΟΣΤΟΛΗ',
+      aiThinking: 'Ο σταθμός ακούει...', aiYou: 'ΕΣΕΙΣ', aiVesper: 'ΕΣΠΕΡΙΑ',
+      aiError: 'Σφάλμα AI', aiNotConfigured: 'Ενεργοποιήστε την AI και προσθέστε το κλειδί API στις Ρυθμίσεις για να κάνετε ερωτήσεις ή να δοκιμάσετε δικές σας ενέργειες.'
     }
   };
 

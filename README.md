@@ -51,6 +51,25 @@ sound design and the sound captions.
 - Your progress saves automatically after every action. Use **Continue** on the
   title screen to resume.
 
+### AI storyteller (optional)
+
+VESPER can optionally use an AI narrator (bring your own OpenAI-compatible API
+key) so you can **ask questions and try free-form actions** instead of only
+selecting predefined options.
+
+- Open **Settings (☰)** and enable **AI Storyteller**, then enter an API base
+  URL (default: `https://api.openai.com/v1`), a model name, and your API key.
+  The key is stored locally in your browser and only sent to the endpoint you
+  configure.
+- The AI reacts in-world to questions and custom actions (you can examine
+  things, talk, experiment, etc.) and may nudge dread up or down, but it **does
+  not solve puzzles or grant story progress/items/clues/endings**. Use the
+  authored choices and quizzes to actually advance the plot.
+- Because this is a static site, direct browser calls may be blocked by CORS on
+  some providers. If that happens, use a CORS-friendly OpenAI-compatible
+  endpoint or proxy (for example OpenRouter or a local/proxy endpoint you
+  control).
+
 ### Top-bar controls
 
 | Button | Action |
@@ -83,12 +102,13 @@ be adjusted. Settings and discovered endings persist across playthroughs.
 ```
 index.html              App shell and all UI markup
 css/theme.css           Design tokens, buttons, panels, modals
-css/layout.css          Layout, HUD, choices, responsive rules
+css/layout.css          Layout, HUD, choices, AI panel, responsive rules
 css/animations.css      Keyframes and motion states
 js/i18n.js              English/Greek strings and localized-value resolver
 js/content.js           All story data: scenes, quizzes, items, clues, endings
 js/engine.js            State machine, saves, requirements, effects, endings
-js/ui.js                Rendering, typewriter, modals, captions, settings
+js/ui.js                Rendering, typewriter, modals, captions, settings, AI log
+js/ai.js                Optional BYOK AI storyteller (OpenAI-compatible)
 js/audio.js             Sample playback layer (no synthesis)
 js/scene.js             Cinematic background stage (crossfade, parallax, stars)
 js/main.js              Bootstrap

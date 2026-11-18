@@ -60,6 +60,55 @@ window.VESPER_UI = (function () {
       var btn = e.target.closest('[data-speed]');
       if (btn) { setSpeed(btn.dataset.speed); H.onSpeed && H.onSpeed(btn.dataset.speed); syncSettings(); }
     });
+    var segAi = $('seg-ai');
+    if (segAi) segAi.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-ai]');
+      if (btn) {
+        updateAISettings({ enabled: btn.dataset.ai === 'on' });
+        syncSettings();
+        H.onAISettings && H.onAISettings();
+      }
+    });
+    ['ai-base', 'ai-model', 'ai-key'].forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      el.addEventListener('change', function () {
+        updateAISettings({
+          baseUrl: $('ai-base').value.trim(),
+          model: $('ai-model').value.trim(),
+          apiKey: $('ai-key').value
+        });
+        H.onAISettings && H.onAISettings();
+      });
+    });
+    var aiForm = $('ai-form');
+    if (aiForm) aiForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var input = $('ai-input');
+      var text = input ? input.value.trim() : '';
+      if (!text) return;
+      if (!window.VESPER_AI || !VESPER_AI.isReady()) {
+        setAIStatus(I18N.t('aiNotConfigured'));
+        return;
+      }
+      input.value = '';
+      appendAILog('user', text);
+      setAIStatus(I18N.t('aiThinking'));
+      setAIEnabled(false);
+      if (H.onAIAction) {
+        H.onAIAction(text).then(function () {
+          setAIStatus('');
+          setAIEnabled(true);
+          if ($('ai-input')) $('ai-input').focus();
+        }).catch(function () {
+          setAIStatus('');
+          setAIEnabled(true);
+        });
+      } else {
+        setAIStatus('');
+        setAIEnabled(true);
+      }
+    });
     $('volume').addEventListener('input', function (e) {
       H.onVolume && H.onVolume(e.target.value / 100);
     });
@@ -86,6 +135,9 @@ window.VESPER_UI = (function () {
     });
     document.querySelectorAll('[data-i18n-title]').forEach(function (el) {
       el.title = I18N.t(el.getAttribute('data-i18n-title'));
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      el.placeholder = I18N.t(el.getAttribute('data-i18n-placeholder'));
     });
   }
 
@@ -150,6 +202,8 @@ window.VESPER_UI = (function () {
     $('scene-foot').textContent = footParts.join('  ·  ');
 
     renderChoices(scene, state, content);
+    renderAILog(state || {});
+    syncAIVisibility();
     updateHud(state, scene.act);
   }
 
@@ -368,6 +422,75 @@ window.VESPER_UI = (function () {
     setSeg('seg-motion', 'motion', document.documentElement.getAttribute('data-motion') === 'off' ? 'off' : 'on');
     setSeg('seg-speed', 'speed', currentSpeedName);
     $('volume').value = Math.round((state ? state.volume : VESPER_AUDIO.volume) * 100);
+    syncAISettingsUI();
+    syncAIVisibility();
+  }
+
+  /* -------------------------------------------------------------------- AI */
+  function updateAISettings(partial) {
+    if (!window.VESPER_AI) return;
+    VESPER_AI.setSettings(partial);
+  }
+  function syncAISettingsUI() {
+    if (!window.VESPER_AI) return;
+    var s = VESPER_AI.getSettings();
+    setSeg('seg-ai', 'ai', s.enabled ? 'on' : 'off');
+    if ($('ai-base')) $('ai-base').value = s.baseUrl || '';
+    if ($('ai-model')) $('ai-model').value = s.model || '';
+    if ($('ai-key')) $('ai-key').value = s.apiKey || '';
+  }
+  function syncAIVisibility() {
+    var panel = $('ai-panel');
+    if (!panel || !window.VESPER_AI) return;
+    var s = VESPER_AI.getSettings();
+    panel.classList.toggle('hidden', !s.enabled);
+    var form = $('ai-form');
+    if (form) form.style.display = VESPER_AI.isReady() ? '' : 'none';
+    if (s.enabled && !VESPER_AI.isReady()) {
+      setAIStatus(I18N.t('aiNotConfigured'));
+    } else if (s.enabled) {
+      // keep existing status if it's not the not-configured message
+      var st = $('ai-status');
+      if (st && st.textContent === I18N.t('aiNotConfigured')) st.textContent = '';
+    }
+  }
+  function renderAILog(state) {
+    var log = $('ai-log');
+    if (!log) return;
+    var hist = (state && state.aiHistory) ? state.aiHistory : [];
+    log.innerHTML = '';
+    hist.slice(-12).forEach(function (h) {
+      var row = document.createElement('div');
+      row.className = 'ai-msg ' + (h.role === 'user' ? 'ai-user' : 'ai-narrator');
+      var who = document.createElement('div');
+      who.className = 'ai-who';
+      who.textContent = h.role === 'user' ? I18N.t('aiYou') : I18N.t('aiVesper');
+      var text = document.createElement('div');
+      text.className = 'ai-text';
+      text.textContent = h.text;
+      row.appendChild(who);
+      row.appendChild(text);
+      log.appendChild(row);
+    });
+    log.scrollTop = log.scrollHeight;
+  }
+  function appendAILog(role, text) {
+    var state = window.VESPER_ENGINE && VESPER_ENGINE.getState();
+    if (!state) return;
+    if (!state.aiHistory) state.aiHistory = [];
+    state.aiHistory.push({ role: role, text: text, t: Date.now() });
+    if (state.aiHistory.length > 40) state.aiHistory = state.aiHistory.slice(-40);
+    renderAILog(state);
+  }
+  function setAIStatus(msg) {
+    var el = $('ai-status');
+    if (el) el.textContent = msg || '';
+  }
+  function setAIEnabled(on) {
+    var input = $('ai-input');
+    var btn = $('ai-send');
+    if (input) input.disabled = !on;
+    if (btn) btn.disabled = !on;
   }
 
   var currentSpeedName = 'normal';
@@ -441,6 +564,7 @@ window.VESPER_UI = (function () {
     openPanel: openPanel, closePanel: closePanel, openSettings: openSettings, closeSettings: closeSettings,
     syncSettings: syncSettings, showEnding: showEnding, caption: caption, toast: toast,
     refreshLanguage: refreshLanguage, setSpeed: setSpeed, setCaptions: setCaptions,
-    getCaptions: function () { return captionEnabled; }, getSpeed: function () { return currentSpeedName; }
+    getCaptions: function () { return captionEnabled; }, getSpeed: function () { return currentSpeedName; },
+    appendAILog: appendAILog, setAIStatus: setAIStatus, setAIEnabled: setAIEnabled, renderAILog: renderAILog, syncAIVisibility: syncAIVisibility
   };
 })();

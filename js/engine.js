@@ -17,6 +17,7 @@ window.VESPER_ENGINE = (function () {
       sceneId: C.start,
       inventory: [], clues: [], flags: [], visited: [], used: [],
       dread: 0, choicesMade: 0,
+      aiHistory: [],
       audioOn: true, volume: 0.7, captions: true, motion: true, speed: 'normal'
     };
   }
@@ -216,6 +217,7 @@ window.VESPER_ENGINE = (function () {
       motion: state.motion, speed: state.speed
     };
     state = saved;
+    if (!state.aiHistory) state.aiHistory = [];
     Object.keys(settings).forEach(function (k) { if (state[k] === undefined) state[k] = settings[k]; });
     pending = null;
     quizAttempts = {};
@@ -244,6 +246,38 @@ window.VESPER_ENGINE = (function () {
     if (scene && document.getElementById('game').classList.contains('hidden') === false) {
       VESPER_UI.renderScene(scene, state, C);
     }
+  }
+
+  /* ---------------------------------------------------------- AI actions */
+  function handleAIAction(text) {
+    var scene = C.scenes[state.sceneId];
+    if (!scene || !window.VESPER_AI) return Promise.resolve();
+    if (!VESPER_AI.isReady()) {
+      VESPER_UI.setAIStatus(I18N.t('aiNotConfigured'));
+      VESPER_UI.setAIEnabled(true);
+      return Promise.resolve();
+    }
+    return VESPER_AI.ask(text, state, scene, C).then(function (res) {
+      if (!res) return;
+      if (res.error) {
+        VESPER_UI.appendAILog('ai', '[' + I18N.t('aiError') + '] ' + res.error);
+      } else {
+        VESPER_UI.appendAILog('ai', res.reply || '');
+        if (res.dread_delta) {
+          var before = state.dread;
+          state.dread = Math.max(0, Math.min(5, state.dread + res.dread_delta));
+          if (state.dread !== before) {
+            VESPER_AUDIO.setDread(state.dread);
+            VESPER_UI.toast(res.dread_delta > 0 ? 'dreadUp' : 'dreadDown');
+          }
+        }
+      }
+      VESPER_UI.updateHud(state, scene.act);
+      save();
+    }).catch(function () {
+      VESPER_UI.appendAILog('ai', '[' + I18N.t('aiError') + ']');
+      save();
+    });
   }
   function toggleLanguage() { setLanguage(I18N.lang === 'en' ? 'el' : 'en'); }
 
@@ -285,6 +319,6 @@ window.VESPER_ENGINE = (function () {
     hasSave: hasSave, goto: goto, handleChoice: handleChoice, handleAnswer: handleAnswer,
     setLanguage: setLanguage, toggleLanguage: toggleLanguage, setAudio: setAudio, toggleAudio: toggleAudio,
     setVolume: setVolume, setCaptions: setCaptions, setMotion: setMotion, setSpeed: setSpeed,
-    applyEffects: applyEffects
+    applyEffects: applyEffects, handleAIAction: handleAIAction
   };
 })();

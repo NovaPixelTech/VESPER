@@ -51,7 +51,17 @@
       <div class="scene-text" id="scene-text" aria-live="polite"></div>
       <div class="scene-foot" id="scene-foot"></div>
     </section>
-    <section class="choices" id="choices" aria-label="Available actions"></section>
+    <div class="interaction">
+      <section class="choices" id="choices" aria-label="Available actions"></section>
+      <section class="ai-panel hidden" id="ai-panel">
+        <div class="ai-log" id="ai-log" aria-live="polite"></div>
+        <form class="ai-form" id="ai-form">
+          <input class="ai-input" id="ai-input" type="text" autocomplete="off" data-i18n-placeholder="aiPlaceholder" placeholder="Ask or try a custom action...">
+          <button class="btn btn-primary ai-send" id="ai-send" type="submit" data-i18n="aiSend">SEND</button>
+        </form>
+        <div class="ai-status" id="ai-status"></div>
+      </section>
+    </div>
   </main>
 
   <div class="caption" id="caption" aria-live="polite"></div>
@@ -156,6 +166,29 @@
             <button class="seg-btn" data-speed="fast" data-i18n="fast">FAST</button>
           </span>
         </div>
+        <div class="setting-group">
+          <div class="setting-group-title" data-i18n="aiSettings">AI STORYTELLER (OPTIONAL)</div>
+          <label class="setting-row">
+            <span data-i18n="aiEnable">ENABLE AI</span>
+            <span class="seg" id="seg-ai">
+              <button class="seg-btn" data-ai="off" data-i18n="off">OFF</button>
+              <button class="seg-btn" data-ai="on" data-i18n="on">ON</button>
+            </span>
+          </label>
+          <label class="setting-row setting-stack">
+            <span data-i18n="aiBaseUrl">API BASE URL</span>
+            <input type="text" id="ai-base" class="setting-input" placeholder="https://api.openai.com/v1">
+          </label>
+          <label class="setting-row setting-stack">
+            <span data-i18n="aiModel">MODEL</span>
+            <input type="text" id="ai-model" class="setting-input" placeholder="gpt-4o-mini">
+          </label>
+          <label class="setting-row setting-stack">
+            <span data-i18n="aiKey">API KEY (STORED LOCALLY)</span>
+            <input type="password" id="ai-key" class="setting-input" placeholder="sk-...">
+          </label>
+          <div class="setting-note" data-i18n="aiNote">Bring your own OpenAI-compatible API key to ask questions and try custom actions. Your key stays in this browser. AI can react and answer in-world but will not solve puzzles or change story progress.</div>
+        </div>
       </div>
       <div class="modal-foot">
         <button class="btn btn-quiet" id="btn-settings-close" data-i18n="close">CLOSE</button>
@@ -187,6 +220,7 @@
 <script src="js/content.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/scene.js"></script>
+<script src="js/ai.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/main.js"></script>

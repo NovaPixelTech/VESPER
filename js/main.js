@@ -20,7 +20,8 @@
       onCaptions: function (on) { VESPER_ENGINE.setCaptions(on); },
       onSpeed: function (name) { VESPER_ENGINE.setSpeed(name); },
       onChoice: function (choice) { VESPER_ENGINE.handleChoice(choice); },
-      onAnswer: function (id, btn) { VESPER_ENGINE.handleAnswer(id, btn); }
+      onAnswer: function (id, btn) { VESPER_ENGINE.handleAnswer(id, btn); },
+      onAIAction: function (text) { return VESPER_ENGINE.handleAIAction(text); }
     });
 
     VESPER_UI.showTitle(VESPER_ENGINE.hasSave());
